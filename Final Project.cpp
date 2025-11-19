@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 int booking (int room[][6][5]){
      int roomtype = 0;
@@ -80,14 +80,14 @@ int check=0,valid=0;
      if(room[i][j][0] == check){
         printf("\nEnter your Name: ");
         scanf(" %[^\n]", &name);
-        printf("\nEnter your CNIC number: ");
+        printf("Enter your CNIC number: ");
         scanf("%d",&room[i][j][4]);
-        printf("\nEnter Number of days: ");
+        printf("Enter Number of days: ");
         scanf("%d",&room[i][j][2]);
         room[i][j][1]=1;
         printf("\n=======================\n");
         printf("Room Booked Succesfully.");
-        printf("=======================\n");
+        printf("\n=======================\n");
          j=6;
          i=3;
    
@@ -146,7 +146,22 @@ int main() {
                 break;
 
             case 4:
-                 
+              char pass[10], usern[10];
+              char correctusern[6]="admin", correctpass[7]="123456";
+              printf("\nEnter Username: ");
+              scanf(" %s", &usern);
+              printf("Enter Password: ");
+              scanf(" %s", &pass);
+            if(strcmp(usern, correctusern)==0 && strcmp(pass, correctpass)==0){
+              printf("\n//Logged in Successfully.//");
+              printf("\n\nRooms Vacant: ");
+              printf("\nRooms Booked: ");
+              return 1;
+            }
+            else{
+              printf("\n//Invalid Username or Password.//");
+              return 1;
+            }
                   break;
             case 5:
             	
