@@ -2,6 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct BookingInfo {
+    char name[50];
+    int roomtype;
+};
+
+struct BookingInfo info;
+
+
 int booking (int room[][6][5]){
      int roomtype = 0;
     int room_size = 0;
@@ -28,6 +36,8 @@ int count=0;
         printf("\n1. Standard\n2. Deluxe\n3. Executive\n");
         printf("Enter your choice (1-3): ");
         scanf("%d", &roomtype);
+        info.roomtype = roomtype;
+
 
         if (roomtype < 1 || roomtype > 3)
             printf("\nInvalid input! Please select 1, 2, or 3.\n");
@@ -80,11 +90,15 @@ int check=0,valid=0;
      if(room[i][j][0] == check){
         printf("\nEnter your Name: ");
         scanf(" %[^\n]", &name);
+        strcpy(info.name, name);   // store into global structure
         printf("Enter your CNIC number: ");
         scanf("%d",&room[i][j][4]);
         printf("Enter Number of days: ");
         scanf("%d",&room[i][j][2]);
         room[i][j][1]=1;
+       
+        printf("\n\nYour Room No is: %d\n", room[i][j][0]);
+       
         printf("\n=======================\n");
         printf("Room Booked Succesfully.");
         printf("\n=======================\n");
@@ -99,11 +113,12 @@ return 0;
 }
 
 
+
 int main() {
-    int room[3][6][5] = {
+    int room[3][6][5] = {  //{roomid, roomstatus (0 for booked and 1 for free), days of stay, rates, cnic}
         // Standard
         {
-            {1,0,0,5000,0}, {2,0,0,5000,0}, {3,0,0,10000,0}, {4,1,0,10000,0}, {5,0,0,15000,0}, {6,1,0,15000,0}
+            {1,1,0,5000,0}, {2,1,0,5000,0}, {3,0,0,10000,0}, {4,1,0,10000,0}, {5,0,0,15000,0}, {6,1,0,15000,0}
         },
         // Deluxe
         {
@@ -116,20 +131,60 @@ int main() {
     };
 
     int choice=0;
-    int all_book=0;
+    int all_book=0,n=0,count=0, vacant=0;
+    char pass[10], usern[10];
+    char correctusern[6]="admin", correctpass[7]="123456";
+    int bookedroom, recheckcnic;
+    int  serviceCharges = 500, foodCharges=2000, Total=0, taxR= 20, taxA = 1000, dos, pricepernight, totalroomcost;
 
     printf("====================\n");
     printf("Welcome To ABC Hotel\n");
     printf("====================\n");
+//farzan
+do{
+    printf("\n1. Login as Manager\n2. Login as Staff\n\nEnter(1-2): ");
+    scanf("%d",&n);
+   
+   
+}while(n!=1 && n!=2);
+if(n==1){
+    printf("\nEnter Username: ");
+              scanf(" %s", &usern);
+              printf("Enter Password: ");
+              scanf(" %s", &pass);
+            if(strcmp(usern, correctusern)==0 && strcmp(pass, correctpass)==0){
+              printf("\n//Logged in Successfully.//\n");
+              int count=0;
+    for(int i=0;i<3;i++){
+        for(int j=0;j<6;j++){
+            if(room[i][j][1]==1){
 
+                count++;
+            }
+        }
+    }
+            printf("\nRooms Booked: %d",count);
+            vacant = 18-count;
+            printf("\nRooms Vacant: %d", vacant);
+
+
+             
+             
+            }
+            else{
+              printf("\n//Invalid Username or Password.//");
+              system("pause");
+                return 1;
+             }
+ }else{
     do{
-        printf("\n1. Book A Room\n2. Check Out\n3. Check Vacant Room\n4. Login as Manager\n5. Exit\n\nEnter (1-5): ");
+        printf("\n1. Book A Room\n2. Rates\n3. Check Vacant Room\n4. Checkout\n5. Exit\n\nEnter (1-5): ");
         scanf("%d",&choice);
 
         switch(choice) {
 
             case 1:
-              all_book =  booking(room);
+              all_book = booking(room);
               if(all_book==0){
                 system("pause");
                 system("cls");
@@ -137,7 +192,13 @@ int main() {
                 break;
 
             case 2:
-           
+            //usama
+            printf("\nStandard:\n 1. Single (1 person) = 5000\n 2. Double (2 person) = 10000\n 3. Family (4-8 person) = 15000\n ");
+             printf("\nDeluxe:\n 1. Single (1 person) = 7000\n 2. Double (2 person) = 12000\n 3. Family (4-8 person) = 17000\n ");
+             printf("\nExecutive:\n 1. Single (1 person) = 10000\n 2. Double (2 person) = 17000\n 3. Family (4-8 person) = 30000\n ");
+           system("pause");
+            system("cls");
+             
              
                 break;
 
@@ -145,34 +206,84 @@ int main() {
        
                 break;
 
-            case 4:
-              char pass[10], usern[10];
-              char correctusern[6]="admin", correctpass[7]="123456";
-              printf("\nEnter Username: ");
-              scanf(" %s", &usern);
-              printf("Enter Password: ");
-              scanf(" %s", &pass);
-            if(strcmp(usern, correctusern)==0 && strcmp(pass, correctpass)==0){
-              printf("\n//Logged in Successfully.//");
-              printf("\n\nRooms Vacant: ");
-              printf("\nRooms Booked: ");
-              return 1;
+           case 4: // Checkout
+    printf("\n\nEnter the Room No you Booked: ");
+    scanf("%d", &bookedroom);
+
+    printf("Enter your CNIC number: ");
+    scanf("%d", &recheckcnic);
+
+    int found = 0;  
+    char roomTypeName[20];
+
+    for(int i=0;i<3;i++){
+        for(int j=0;j<6;j++){
+
+            if(room[i][j][0] == bookedroom && room[i][j][4] == recheckcnic){
+
+                found = 1;
+
+                if(info.roomtype == 1)
+                    strcpy(roomTypeName, "Standard");
+                else if(info.roomtype == 2)
+                    strcpy(roomTypeName, "Deluxe");
+                else if(info.roomtype == 3)
+                    strcpy(roomTypeName, "Executive");
+
+                dos = room[i][j][2];             
+                pricepernight = room[i][j][3];    
+                totalroomcost = dos * pricepernight;
+
+                Total = totalroomcost + serviceCharges + foodCharges + taxA;
+
+                printf("========================================================\n");
+                printf("                    ABC Hotel\n");
+                printf("           Customer Billing Receipt\n");
+                printf("========================================================\n\n");
+
+                printf("Guest Name            :  %s\n", info.name);
+                printf("CNIC / ID No.         :  %d\n", recheckcnic);
+                printf("Room Number           :  %d\n", bookedroom);
+                printf("Room Type             :  %s\n", roomTypeName);
+                printf("Total Days Of Stay    :  %d\n\n", dos);
+
+                printf("--------------------------------------------------------\n");
+                printf("                    Charges Summary\n");
+                printf("--------------------------------------------------------\n");
+                printf("Room Price per Night     :  Rs. %d\n", pricepernight);
+                printf("Total Room Charges       :  Rs. %d\n", totalroomcost);
+                printf("Service Charges          :  Rs. %d\n", serviceCharges);
+                printf("Food / Extras            :  Rs. %d\n", foodCharges);
+                printf("Tax (%d%%)               :  Rs. %d\n", taxR, taxA);
+                printf("--------------------------------------------------------\n");
+                printf("Grand Total              :  Rs. %d\n", Total);
+                printf("--------------------------------------------------------\n\n");
+                printf("\nThank you for choosing ABC Hotel!\n");
+                printf("We hope to serve you again.\n");
+                printf("========================================================\n");
+
+                room[i][j][1] = 1;
             }
-            else{
-              printf("\n//Invalid Username or Password.//");
-              return 1;
-            }
-                  break;
+        }
+    }
+
+    if(!found){
+        printf("\nInvalid Room No or CNIC! Checkout Failed.\n");
+    }
+
+    break;
             case 5:
             	
             	break;
             default:
                 printf("\nInvalid choice! Try again.\n");
-                choice = 0;   // repeat
+                choice = 0; // repeat
                 break;
         }
 
     }while(choice != 5);
+}
 
     return 0;
 }
+
